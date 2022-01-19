@@ -1,0 +1,176 @@
+@model CreateOrderViewModel
+
+<script>
+	function limitWorkPerimeter() {
+		let workPerimeterInputs = document.getElementsByClassName("work-perimeter-input");
+		let commonPerimeter = 0;
+
+		let perimeterInputs = document.getElementsByClassName("perimeter-input");
+		for (let i = 0; i < perimeterInputs.length; i++) {
+			commonPerimeter += Number(perimeterInputs[i].value)
+		}
+
+		for (let i = 0; i < workPerimeterInputs.length; i++) {
+			workPerimeterInputs[i].setAttribute("max", commonPerimeter);
+		}
+	}
+</script>
+
+<form asp-controller="Projects"
+	asp-action="AddProject">
+	<div class="row gy-4"
+		id="panelsRow">
+		<div class="col-12">
+			<shadowedpanel>
+				<div class="row">
+					<div class="col-6">
+						<div class="fs-2">Создание проекта</div>
+					</div>
+					<div class="col-6 align-middle text-end h-100">
+						<input class="btn btn-success align-middle fs-4"
+							type="submit"
+							value="Создать проект"
+							asp-controller="Orders"
+							asp-action="CreateOrder">
+						</input>
+					</div>
+				</div>
+			</shadowedpanel>
+		</div>
+		@Html.CreateUserMessagesBlock(ViewData["errorMessage"] as string, ViewData["successMessage"] as string)
+		<div class="col-12 col-lg-6">
+			<div class="row gy-4">
+				<div class="col-12">
+					<shadowedpanel>
+						<div class="fs-3 border-bottom w-100">Общая информация</div>
+						<input class="form-control mt-2"
+							type="text"
+							asp-for="@(Model.NewOrder.Name)"
+							placeholder="Введите название проекта..."
+							maxlength="50">
+						@for (int i = 0; i < Model.PerimeterTypes.Count; i++)
+						{
+						<div class="input-group mt-2">
+							<input class="form-control w-75 perimeter-input"
+								id="perimeterInput"
+								type="number"
+								min="0"
+								max="100000"
+								asp-for="@(Model.NewOrderPerimeters[i].Perimeter)"
+								placeholder="@(Model.PerimeterTypes[i].Name)..."
+								step=".01"
+								onkeyup="limitWorkPerimeter();">
+							<input class="from-control"
+								type="hidden"
+								value="@(Model.PerimeterTypes[i].ID)"
+								asp-for="@(Model.NewOrderPerimeters[i].PerimeterTypeID)">
+							<span class="input-group-text">м.</span>
+						</div>
+						}
+					</shadowedpanel>
+				</div>
+				<div class="col-12">
+					<shadowedpanel id="leftBottomPanel">
+						<div class="fs-3 w-100 border-bottom">Дополнительная работа</div>
+							<div style="overflow-y: scroll; height: 372px;"
+								data-bs-spy="scroll">
+							<table class="table">
+								<tbody>
+									@for (int i = 0; i < Model.Works.Count; i++)
+									{
+									<tr>
+										<td class="align-middle">
+											<input type="checkbox"
+												class="form-check-input"
+												asp-for="@(Model.SelectableWorks[i].IsSelected)">
+											<input type="hidden"
+												value="@Model.Works[i].ID"
+												asp-for="@(Model.SelectableWorks[i].EntityID)">
+											<input type="hidden"
+												value="@(Model.Works[i].IsApplicableToWholePerimeter)"
+												asp-for="@(Model.Works[i].IsApplicableToWholePerimeter)">
+										</td>
+										<td class="px-0 ml-0 align-middle">
+											<div>@Model.Works[i].Name</div>
+										</td>
+										<td class="align-middle">
+											@if (Model.Works[i].IsApplicableToWholePerimeter == false)
+											{
+											<div class="input-group">
+												<input type="number"
+													asp-for="@Model.SelectableWorks[i].Amount"
+													class="form-control w-25 work-perimeter-input"
+													min="0" max="0" step=".01">
+												<span class="input-group-text">м.</span>
+											</div>
+											}
+										</td>
+									</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</shadowedpanel>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-lg-6">
+			<div class="row gy-4">
+				<div class="col-12">
+					<shadowedpanel>
+						<div class="fs-3 w-100 border-bottom">Описание проекта</div>
+						<textarea class="form-control mt-2"
+							id="descriptionTextArea"
+							asp-for="@(Model.NewOrder.Desription)"
+							style="height: 200px; resize: none;"
+							maxlength="500"
+							placeholder="Описание проекта (опционально)...">
+						</textarea>
+					</shadowedpanel>
+				</div>
+				<div class="col-12">
+					<shadowedpanel>
+						<div class="fs-3 w-100 border-bottom">Изделия</div>
+						<div class="scrollspy-example"
+							style="overflow-y: scroll; height: 300px;"
+							data-bs-spy="scroll">
+							<table class="table">
+								<tbody>
+									@for (int i = 0; i < Model.Wares.Count; i++)
+									{
+									<tr>
+										<td class="align-middle" style="width: 25px;">
+											<input class="form-check-input ml-2"
+												id="checkFor@(Model.Wares[i].ID)"
+												type="checkbox"
+												asp-for="@(Model.SelectableWares[i].IsSelected)">
+												<input type="hidden"
+												value="@Model.Wares[i].ID"
+												asp-for="@(Model.SelectableWares[i].EntityID)">
+										</td>
+										<td class="align-middle px-0 ml-0" style="max-width: 100px;">
+											<label>@Model.Wares[i].Name</label>
+										</td>
+										<td class="text-center align-middle" style="max-width: 50px;">
+											<div class="input-group">
+												<input class="form-control"
+													type="number"
+													min="1" max="99"
+													value="1"
+													asp-for="@(Model.SelectableWares[i].Amount)">
+												<span class="input-group-text">
+													@(Model.GetWareUnitShortName(Model.Wares[i].ID) + ".")
+												</span>
+											</div>
+										</td>
+									</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</shadowedpanel>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

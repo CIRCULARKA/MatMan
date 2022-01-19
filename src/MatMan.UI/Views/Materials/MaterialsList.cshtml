@@ -1,0 +1,50 @@
+@model MaterialsViewModel
+
+<div class="col-12">
+	<shadowedpanel>
+		<div class="fs-2">Создание материалов</div>
+	</shadowedpanel>
+</div>
+@Html.CreateUserMessagesBlock(ViewData["errorMessage"] as string, ViewData["successMessage"] as string)
+<div class="col-12 col-lg-6">
+	<shadowedpanel>
+		<p class="fs-2 fw-3 w-100 border-bottom border-1">Действия</p>
+		<div class="p-3">
+			<form method="POST" asp-controller="Materials" asp-action="CreateMaterial">
+				<input class="form-control"
+					type="text"
+					asp-for="@(Model.NewEntity.Name)"
+					max="50"
+					placeholder="Введите название материала...">
+				<div class="input-group mt-2">
+					<div class="w-75 mt-1 px-2">Выберите единицу измерения материала: </div>
+					<select class="form-select d-inline w-auto"
+						asp-for="@(Model.NewEntityConfiguration.UnitID)">
+						<option value="0">-</option>
+						@foreach (var unit in Model.Units)
+						{
+							<option value="@unit.ID">@($"{unit.ShortName}.")</option>
+						}
+					</select>
+				</div>
+				<input class="btn btn-success mt-2 w-100" type="submit" value="Добавить материал">
+			</form>
+		</div>
+	</shadowedpanel>
+</div>
+<div class="col-12 col-lg-6">
+	<shadowedpanel>
+		<p class="fs-2 fw-3 w-100 border-bottom border-1">Список материалов</p>
+		<div class="p-3 mb-3">
+			<div data-bs-spy="scroll" class="scrollspy-example" style="overflow-y: scroll; height: 62vh; position: relative;">
+				@(Html.CreateTableOfComponents<Material>(
+					components: Model.Entities,
+					deleteComponentActionName: "DeleteMaterial",
+					deletionRouteName: "materialid",
+					getComponentConfiguration:
+						(component) =>
+							Model.GetEntityConfiguration(component.ID)))
+			</div>
+		</div>
+	</shadowedpanel>
+</div>

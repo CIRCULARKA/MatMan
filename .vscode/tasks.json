@@ -1,0 +1,202 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build Server",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"${workspaceFolder}/src/MatMan.UI"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Bulid Server For Debugging",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"${workspaceFolder}/src/MatMan.UI",
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Watch: server",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"watch",
+				"--project",
+				"${workspaceFolder}/src/MatMan.UI",
+				"run",
+			],
+			"isBackground": true,
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"echo": false,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Watch: pdf generation tests",
+			"type": "shell",
+			"command": "start",
+			"args": [
+				"dotnet",
+				"watch",
+				"--project",
+				"${workspaceFolder}/tests/PdfGeneration",
+				"test",
+				"-o",
+				"${workspaceFolder}/tests/PdfGeneration/out"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Watch: tests",
+			"type": "shell",
+			"command": "start",
+			"args": [
+				"dotnet",
+				"watch",
+				"--project",
+				"${workspaceFolder}/tests/UnitOfWorkTests",
+				"test",
+				"-o",
+				"${workspaceFolder}/tests/UnitOfWorkTests/out"
+			],
+			"isBackground": true,
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"echo": false,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Publish: server",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"publish",
+				"src/MatMan.UI",
+				"-o",
+				"${workspaceFolder}/Deploy/Publish"
+			],
+			"presentation": {
+				"echo": false,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Load files via ftp",
+			"type": "shell",
+			"command": "winscp",
+			"args": [
+				"/nointeractiveinput",
+				"/script=${workspaceFolder}/Deploy/DeploymentScript.txt"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Deploy",
+			"type": "shell",
+			"dependsOn": [
+				"Publish: server",
+				"Load files via ftp"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"dependsOrder": "sequence",
+			"problemMatcher": []
+		},
+		{
+			"label": "Migrations: drop database",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"ef",
+				"--project",
+				"src/MatMan.Data",
+				"--startup-project",
+				"src/MatMan.UI",
+				"database",
+				"drop",
+				"-f"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Migrations: create",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"ef",
+				"--project",
+				"src/MatMan.Data",
+				"--startup-project",
+				"src/MatMan.UI",
+				"migrations",
+				"add",
+				"Init"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Migrations: recreate database",
+			"type": "shell",
+			"dependsOn": [
+				"Migrations: drop database",
+				"Migrations: update database"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"dependsOrder": "sequence",
+			"problemMatcher": []
+		},
+		{
+			"label": "Migrations: update database",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"ef",
+				"--project",
+				"src/MatMan.Data",
+				"--startup-project",
+				"src/MatMan.UI",
+				"database",
+				"update",
+			],
+			"problemMatcher": []
+		}
+	]
+}

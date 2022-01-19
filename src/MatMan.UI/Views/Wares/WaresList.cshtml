@@ -1,0 +1,146 @@
+@model WaresViewModel
+
+<script>
+	function showOrHideMaterials(wareID) {
+		let target = document.getElementById(wareID);
+		let button = document.getElementById('fold-button-' + wareID)
+
+		if (target.style.display == 'table') {
+			target.style.display = 'none';
+			button.style.transform = 'rotate(0deg)';
+		}
+		else {
+			target.style.display = 'table';
+			button.style.transform = 'rotate(180deg)';
+		}
+	}
+</script>
+
+<form asp-controller="Wares"
+	asp-action="AddWare">
+	<div class="row gy-4">
+		<div class="col-12">
+			<shadowedpanel>
+				<div class="row">
+					<div class="col-6">
+						<div class="fs-2">Создание изделий</div>
+					</div>
+					<div class="col-6 align-middle text-end h-100">
+						<input class="btn btn-success align-middle fs-4"
+							type="submit"
+							value="Создать"
+							asp-controller="Wares"
+							asp-action="CreateWare">
+						</input>
+					</div>
+				</div>
+			</shadowedpanel>
+		</div>
+		@Html.CreateUserMessagesBlock(ViewData["errorMessage"] as string, ViewData["successMessage"] as string)
+		<div class="col-12 col-lg-6">
+			<div class="row gy-4">
+				<div class="col-12">
+					<shadowedpanel>
+						<div class="fs-3 w-100 border-bottom mb-2">Основная информация</div>
+						<input class="form-control" type="text" asp-for="@(Model.NewEntity.Name)" placeholder="Введите название изделия...">
+						<div class="input-group mt-2">
+							<div class="w-75 mt-1 px-2">Выберите единицу измерения материала: </div>
+							<select class="form-select d-inline w-auto"
+								asp-for="@(Model.NewEntityConfiguration.UnitID)">
+								<option value="0">-</option>
+								@foreach (var unit in Model.Units)
+								{
+								<option value="@unit.ID">@($"{unit.ShortName}.")</option>
+								}
+							</select>
+						</div>
+					</shadowedpanel>
+				</div>
+				<div class="col-12">
+					<shadowedpanel>
+						<div class="fs-3 w-100 border-bottom">Состав изделия</div>
+						<div class="scrollspy-example"
+							style="overflow-y: scroll; height: 300px;"
+							data-bs-spy="scroll">
+							<table class="table">
+								<tbody>
+									@for (int i = 0; i < Model.Materials.Count(); i++)
+									{
+									<tr>
+										<td class="align-middle text-center px-0">
+											<input class="form-check-input ml-2"
+												type="checkbox"
+												asp-for="@(Model.SelectableMaterials[i].IsSelected)">
+											<input type="hidden"
+												value="@Model.Materials[i].ID"
+												asp-for="@(Model.SelectableMaterials[i].EntityID)">
+										</td>
+										<td class="align-middle px-2">
+											@Model.Materials[i].Name
+										</td>
+										<td>
+											<div class="input-group">
+												<input class="form-control"
+													type="number"
+													min="1" max="1000"
+													value="1"
+													asp-for="@(Model.SelectableMaterials[i].Amount)">
+												<span class="input-group-text">@(Model.GetMaterialUnitShortName(Model.Materials[i].ID))</span>
+											</div>
+										</td>
+									</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</shadowedpanel>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-lg-6">
+			<shadowedpanel>
+				<p class="fs-2 fw-3 w-100 border-bottom">Список изделий</p>
+				<div class="scrollspy-example"
+					style="overflow-y: scroll; height: 471px;"
+					data-bs-spy="scroll">
+					<table class="table">
+						<tbody>
+							@foreach (var ware in Model.Entities)
+							{
+							<tr>
+								<td class="align-middle w-75">
+									<div>
+										@ware.Name
+										@{ var config = Model.GetEntityConfiguration(ware.ID); }
+										@if (config != null)
+										{
+										<div style="display: inline;">(@config.Unit.ShortName)</div>
+										}
+									</div>
+									<table class="table table-striped mt-2 p-2 border border-1" colspan="2" style="display: none;" id="@ware.ID">
+										<tbody>
+										@foreach (var wareMaterial in Model.GetWareMaterials(ware.ID))
+										{
+											<tr><td>
+												@wareMaterial.Material.Name (@wareMaterial.MaterialsAmount @Model.GetMaterialUnitShortName(wareMaterial.MaterialID).)
+											</td></tr>
+										}
+										</tbody>
+									</table>
+								</td>
+								<td class="text-center">
+									<a class="link-secondary far fa-caret-square-down fa-2x" style="text-decoration: none;"
+										onclick="showOrHideMaterials('@ware.ID');"
+										id="fold-button-@ware.ID"></a>
+									<a class="link-danger far fa-times-circle fa-2x" style="text-decoration: none;"
+										href="/Wares/DeleteWare?wareid=@ware.ID"></a>
+								</td>
+							</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</shadowedpanel>
+		</div>
+	</div>
+</form>

@@ -1,0 +1,149 @@
+@model OrderSummaryViewModel
+
+<style>
+	.fixedtd {
+		min-width: 200px;
+		width: 400px;
+	}
+</style>
+
+<div class="col-12">
+	<shadowedpanel>
+		<div class="row">
+			<div class="col-6">
+				<div class="fs-2 text-break">
+					@Model.Order.Name
+				</div>
+			</div>
+			<div class="col-6 text-end">
+				<a class="btn btn-secondary">
+					<div>Скачать в виде PDF</div>
+				</a>
+			</div>
+		</div>
+	</shadowedpanel>
+</div>
+@if (Model.HasDescription)
+{
+<div class="col-12">
+	<shadowedpanel>
+		<div class="fs-3">Описание</div>
+		<div class="text-break p-1">
+			@Model.Order.Desription
+		</div>
+	</shadowedpanel>
+</div>
+}
+<div class="col-12 col-lg-6">
+	<div class="row gy-4">
+		@if (Model.HasPerimeterOrDescritption)
+		{
+		<div class="col-12">
+			<shadowedpanel>
+				<div class="fs-3 border-bottom">
+					Общая информация
+				</div>
+				@if (Model.HasPerimeter)
+				{
+					<table class="table table-hover">
+						<tr>
+							<td class="fixedtd"><div>Общий периметр</div></td>
+							<td><div>@Model.CommonPerimeter м.</div></td>
+						</tr>
+						@foreach (var orderPerimeter in Model.OrderPerimeters)
+						{
+						<tr>
+							<td class="fixedtd"><div>@orderPerimeter.PerimeterType.Name</div></td>
+							<td><div>@orderPerimeter.Perimeter м.</div></td>
+						</tr>
+						}
+					</table>
+				}
+			</shadowedpanel>
+		</div>
+		}
+		@if (Model.HasWorks)
+		{
+		<div class="col-12">
+			<shadowedpanel>
+				<div class="fs-3 border-bottom">
+					Работы
+				</div>
+				<table class="table table-hover mt-2">
+					@foreach (var projWork in Model.UsedWorks)
+					{
+					<tr>
+						<td class="fixedtd">@projWork.Work.Name</td>
+						<td>
+							@if (!projWork.Work.IsApplicableToWholePerimeter)
+							{
+							@($"{projWork.Perimeter} м.")
+							}
+							else
+							{
+							@("По всему периметру");
+							}
+						</td>
+					</tr>
+					}
+				</table>
+			</shadowedpanel>
+		</div>
+		}
+		@if (Model.HasWares)
+		{
+		<div class="col-12">
+			<shadowedpanel>
+				<div class="fs-3 border-bottom">
+					Используемые изделия
+				</div>
+				<table class="table table-hover mt-2">
+					@foreach (var pware in Model.AllUsedWares)
+					{
+					<tr>
+						<td class="fixedtd">@(pware.Component.Name)</td>
+						<td>
+							@(pware.ComponentAmount)
+							@{ var wareParams = Model.GetWareConfiguration(pware.ComponentID); }
+							@if (wareParams != null) { @($" {wareParams.Unit.ShortName}.") }
+							else { @(" шт.") }
+						</td>
+					</tr>
+					}
+				</table>
+			</shadowedpanel>
+		</div>
+		}
+	</div>
+</div>
+<div class="col-12 col-lg-6">
+	<div class="row gy-4">
+		<div class="col 12">
+			<shadowedpanel>
+				<div class="fs-3 border-bottom">
+					Итого материалов
+				</div>
+				<table class="table table-hover">
+					@foreach (var projMaterial in Model.AllUsedMaterials)
+					{
+						<tr>
+							<td class="fixedtd">@(projMaterial.Component.Name)</td>
+							<td>
+								@(projMaterial.ComponentAmount)
+								@{var materialParam = Model.GetMaterialConfiguration(projMaterial.ComponentID); }
+								@if (materialParam != null)
+								{
+									@($" {materialParam.Unit.ShortName}.")
+								}
+								else
+								{
+									@(" шт.")
+								}
+							</td>
+						</tr>
+					}
+				</table>
+			</shadowedpanel>
+		</div>
+	</div>
+</div>

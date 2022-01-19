@@ -1,0 +1,25 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": ".NET Core Launch (web)",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "Bulid Server For Debugging",
+			"program": "${workspaceFolder}/src/MatMan.UI/bin/Debug/net5.0/MatMan.UI.dll",
+			"args": [],
+			"cwd": "${workspaceFolder}/src/MatMan.UI",
+			"stopAtEntry": false,
+			// "serverReadyAction": {
+			// 	"action": "no",
+			// 	"pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+			// },
+			"env": {
+				"ASPNETCORE_ENVIRONMENT": "Development"
+			},
+			"sourceFileMap": {
+				"/Views": "${workspaceFolder}/Views"
+			}
+		}
+	]
+}

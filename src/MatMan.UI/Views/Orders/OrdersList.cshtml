@@ -1,0 +1,52 @@
+@model OrdersListViewModel
+
+<div class="row gy-3">
+	<div class="col-12">
+		<shadowedpanel>
+			<div class="w-100">
+				<div class="row">
+					<div class="col-6">
+						<div class="fs-2 fw-3 w-75">Ваши проекты</div>
+					</div>
+					<div class="col-6 text-end">
+						<a class="btn btn-primary fs-4 fw-3 border-bottom align-middle"
+							asp-controller="Orders"
+							asp-action="GetCreateOrderView">
+							Создать проект
+						</a>
+					</div>
+				</div>
+			</div>
+		</shadowedpanel>
+	</div>
+</div>
+<div class="row gy-2">
+	@foreach (var project in Model.Entities)
+	{
+	<div class="col-12">
+		<div class="w-100 p-4 border rounded shadow-sm" style="background: #EEEEEE;">
+			<div class="row">
+				<div class="col-6 align-middle">
+					<div class="ml-3 fs-4">@project.Name</div>
+				</div>
+				<div class="col-6 text-end">
+					<a class="btn btn-success"
+						asp-action="GetOrderSummaryView"
+						asp-route-orderid="@project.ID">
+						Получить детализацию
+					</a>
+					@* <a class="btn btn-primary"
+						asp-action="GetEditProjectView">
+						Редактировать
+					</a> *@
+					<a class="btn btn-danger"
+						asp-action="DeleteOrder"
+						asp-route-orderid="@project.ID">
+						Удалить
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	}
+</div>

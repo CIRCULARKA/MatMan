@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Watch Include="../MatMan.Domain/**/*.cs"></Watch>
+    <Watch Include="../MatMan.Appliaction/**/*.cs"></Watch>
+    <Watch Include="../MatMan.Data/**/*.cs"></Watch>
+    <Watch Include="../MatMan.UI/Pages/*.cs"></Watch>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MatMan.Application\MatMan.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.11">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
