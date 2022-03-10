@@ -1,5 +1,14 @@
 {
 	"version": "2.0.0",
+	"inputs": [
+		{
+			"id": "migration-name",
+			"description": "Migration name",
+			"default": "Init",
+			"type": "promptString",
+			"password": false
+		}
+	],
 	"tasks": [
 		{
 			"label": "Build Server",
@@ -151,7 +160,11 @@
 				"drop",
 				"-f"
 			],
-			"problemMatcher": []
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
 		},
 		{
 			"label": "Migrations: create",
@@ -165,22 +178,12 @@
 				"src/MatMan.UI",
 				"migrations",
 				"add",
-				"Init"
-			],
-			"problemMatcher": []
-		},
-		{
-			"label": "Migrations: recreate database",
-			"type": "shell",
-			"dependsOn": [
-				"Migrations: drop database",
-				"Migrations: update database"
+				"${input:migration-name}"
 			],
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
-			"dependsOrder": "sequence",
 			"problemMatcher": []
 		},
 		{
@@ -196,6 +199,10 @@
 				"database",
 				"update",
 			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
 			"problemMatcher": []
 		}
 	]
