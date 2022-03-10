@@ -1,7 +1,8 @@
 ﻿using MatMan.Application.Providers;
 using MatMan.Application.Editors;
-using MatMan.Domain.Models;
+using MatMan.Common.PdfGeneration;
 using MatMan.Data;
+using MatMan.Domain.Models;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -48,6 +49,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IOrdersEditor, OrdersEditor>();
 
             services.AddScoped<IWorksProvider, WorksProvider>();
+
+            services.AddScoped<PdfGenerator>();
         }
     }
 }
