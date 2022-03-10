@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MatMan.Data\MatMan.Data.csproj" />
+    <ProjectReference Include="..\MatMan.Common\MatMan.Common.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
