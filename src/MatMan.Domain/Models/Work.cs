@@ -11,7 +11,12 @@ namespace MatMan.Domain.Models
         public double CalculatePerimeter(double perimeter)
         {
             if (Name == "Использование кантика")
-                Math.Ceiling(perimeter % 1 <= 0.5 ? perimeter : perimeter + 1);
+            {
+                if ((perimeter % 1) > 0.5)
+                    return Math.Floor(perimeter) + 2;
+                else
+                    return Math.Floor(perimeter) + 1;
+            }
             return perimeter;
         }
     }
