@@ -50,7 +50,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddScoped<IWorksProvider, WorksProvider>();
 
-            services.AddScoped<PdfGenerator>();
+            services.AddScoped<OrderSummaryPdfGenerator>();
         }
     }
 }

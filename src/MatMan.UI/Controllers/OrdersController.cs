@@ -30,7 +30,7 @@ namespace MatMan.UI.Controllers
 
         private readonly IFileProvider _fileProvider;
 
-        private readonly PdfGenerator _pdfGenerator;
+        private readonly OrderSummaryPdfGenerator _pdfGenerator;
 
         public OrdersController(
             IOrdersProvider ordersProvider,
@@ -40,7 +40,7 @@ namespace MatMan.UI.Controllers
             IComponentsProvider<Material, MaterialConfiguration> matsProvider,
             ILogger<OrdersController> logger,
             IFileProvider fileProvider,
-            PdfGenerator generator)
+            OrderSummaryPdfGenerator generator)
         {
             _ordersProvider = ordersProvider;
             _waresProvider = waresProvider;
@@ -144,7 +144,7 @@ namespace MatMan.UI.Controllers
 
         public IActionResult DownloadAsPDF(Guid orderID)
         {
-            return File(_pdfGenerator.CreatePdfDocument(""), "application/octet-stream", "file.pdf");
+            return File(_pdfGenerator.CreateReport(null), "application/octet-stream", "file.pdf");
         }
 
         private OrderSummaryViewModel GetUpdatedOrderSummaryViewModel(Guid orderID) =>
