@@ -5,7 +5,9 @@
 
 Deploy/
 appsettings.json
+appsettings.*.json
 [Mm]igrations/
+logs.txt
 
 # User-specific files
 *.rsuser
