@@ -1,6 +1,6 @@
 ﻿using MatMan.Application.Providers;
 using MatMan.Application.Editors;
-using MatMan.Common.PdfGeneration;
+using MatMan.Application.Reports;
 using MatMan.Data;
 using MatMan.Domain.Models;
 
