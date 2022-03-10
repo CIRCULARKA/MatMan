@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -54,7 +55,11 @@ namespace MatMan.UI
             using (var context =
                 app.ApplicationServices.CreateScope().
                     ServiceProvider.GetService<ApplicationDbContext>()
-            ) { context.Database.Migrate(); }
+            )
+            {
+                if (context.Database.GetPendingMigrations().Any())
+                    context.Database.Migrate();
+            }
 
             app.PopulateDatabase();
 
