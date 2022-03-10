@@ -1,10 +1,14 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
 using MatMan.UI.ViewModels;
 using MatMan.Application.Editors;
+using MatMan.Application.Reports;
 using MatMan.Application.Providers;
 using MatMan.Domain.Models;
 
@@ -24,13 +28,19 @@ namespace MatMan.UI.Controllers
 
         private readonly ILogger<OrdersController> _logger;
 
+        private readonly IFileProvider _fileProvider;
+
+        private readonly PdfGenerator _pdfGenerator;
+
         public OrdersController(
             IOrdersProvider ordersProvider,
             IOrdersEditor ordersEditor,
             IWorksProvider worksProvider,
             IComponentsProvider<Ware, WareConfiguration> waresProvider,
             IComponentsProvider<Material, MaterialConfiguration> matsProvider,
-            ILogger<OrdersController> logger)
+            ILogger<OrdersController> logger,
+            IFileProvider fileProvider,
+            PdfGenerator generator)
         {
             _ordersProvider = ordersProvider;
             _waresProvider = waresProvider;
@@ -39,6 +49,10 @@ namespace MatMan.UI.Controllers
             _materialsProvider = matsProvider;
 
             _logger = logger;
+
+            _fileProvider = fileProvider;
+
+            _pdfGenerator = generator;
         }
 
         public IActionResult CreateOrder(CreateOrderViewModel vm)
@@ -127,6 +141,11 @@ namespace MatMan.UI.Controllers
                 "OrdersList",
                 GetUpdatedOrdersListViewModel()
             );
+
+        public IActionResult DownloadAsPDF(Guid orderID)
+        {
+            return File(_pdfGenerator.CreatePdfDocument(""), "application/octet-stream", "file.pdf");
+        }
 
         private OrderSummaryViewModel GetUpdatedOrderSummaryViewModel(Guid orderID) =>
             new OrderSummaryViewModel {

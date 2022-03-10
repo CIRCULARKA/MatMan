@@ -16,7 +16,9 @@
 				</div>
 			</div>
 			<div class="col-6 text-end">
-				<a class="btn btn-secondary">
+				<a class="btn btn-secondary"
+					asp-action="DownloadAsPDF"
+					asp-route-orderid="@Model.Order.ID">
 					<div>Скачать в виде PDF</div>
 				</a>
 			</div>

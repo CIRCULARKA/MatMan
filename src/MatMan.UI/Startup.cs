@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +28,10 @@ namespace MatMan.UI
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IFileProvider>(
+                new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
+
             services.AddControllersWithViews();
 
             services.AddHsts(options =>
