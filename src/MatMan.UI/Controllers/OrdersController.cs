@@ -144,7 +144,14 @@ namespace MatMan.UI.Controllers
 
         public IActionResult DownloadAsPDF(Guid orderID)
         {
-            return File(_pdfGenerator.CreateReport(null), "application/octet-stream", "file.pdf");
+            var targetOrder = _ordersProvider.GetOrderBy(orderID);
+            var materials = _ordersProvider.GetOrderComponents<Material>(orderID);
+
+            return File(
+                fileContents: _pdfGenerator.GenerateReport(targetOrder.Name, materials),
+                contentType: "application/octet-stream",
+                fileDownloadName: $"{targetOrder.Name}.pdf"
+            );
         }
 
         private OrderSummaryViewModel GetUpdatedOrderSummaryViewModel(Guid orderID) =>
