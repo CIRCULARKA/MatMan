@@ -2,39 +2,67 @@
 using System.IO;
 using System.Collections.Generic;
 using MatMan.Domain.Models;
-using Gehtsoft.PDFFlow;
 using Gehtsoft.PDFFlow.Models.Shared;
-using Gehtsoft.PDFFlow.Models.Exceptions;
 using Gehtsoft.PDFFlow.Builder;
 using Gehtsoft.PDFFlow.Utils;
-using Gehtsoft.PDFFlow.UserUtils;
 using Gehtsoft.PDFFlow.Models.Enumerations;
 
 namespace MatMan.Application.Reports
 {
     public class OrderSummaryPdfGenerator
     {
+        private readonly DocumentBuilder _documentBuilder;
+
+        private readonly SectionBuilder _documentSectionBuilder;
+
+        public OrderSummaryPdfGenerator()
+        {
+            _documentBuilder = DocumentBuilder.New();
+            _documentSectionBuilder = SectionBuilder.New();
+
+            var documentStyle = StyleBuilder.New();
+            documentStyle.SetFontName(Fonts.Courier(14).Name);
+            documentStyle.SetFontSize(14);
+            documentStyle.SetFontEncodingName(EncodingNames.KOI8_R);
+
+            _documentBuilder.ApplyStyle(documentStyle);
+
+            _documentBuilder.AddSection(_documentSectionBuilder);
+        }
+
         /// <summary>
         /// Creates pdf document at specified path. Stores pdf file in user local data by default
         /// </summary>
-        public byte[] CreateReport(IEnumerable<WareMaterial> wareMaterials)
+        public byte[] GenerateReport(string title, IEnumerable<OrderComponent<Material>> wareMaterials)
         {
-            var documentBuilder = DocumentBuilder.New();
-
-            var sectionBuilder = SectionBuilder.New();
-
-            sectionBuilder.AddParagraph(builder => {
-                builder.AddText("Привет");
-                var font = Fonts.Times(18);
-                builder.SetFontName(font.Name);
-                builder.SetFontEncodingName(EncodingNames.KOI8_R);
+            _documentSectionBuilder.AddParagraph(builder => {
+                builder.SetFontSize(24);
+                builder.SetBold();
+                builder.AddText(title);
+                builder.SetAlignment(HorizontalAlignment.Center);
+                builder.SetMarginBottom(30);
             });
 
-            documentBuilder.AddSection(sectionBuilder);
+            _documentSectionBuilder.AddTable(tableBuilder => {
+                tableBuilder.AddColumn("Материал");
+                tableBuilder.AddColumn("Количество");
 
+                foreach (var wareMaterial in wareMaterials)
+                {
+                    tableBuilder.AddRow(rowBuilder => {
+                        rowBuilder.AddCell(wareMaterial.Component.Name);
+                        rowBuilder.AddCell(wareMaterial.ComponentAmount.ToString());
+                    });
+                }
+            });
+
+            return ConvertDocumentToBytes();
+        }
+
+        private byte[] ConvertDocumentToBytes()
+        {
             var outputStream = new MemoryStream();
-            documentBuilder.Build(outputStream);
-
+            _documentBuilder.Build(outputStream);
             return outputStream.ToArray();
         }
     }
