@@ -58,25 +58,18 @@ namespace MatMan.UI
         {
             var urlsRewritingOptions = new RewriteOptions();
 
-            using (var context =
-                app.ApplicationServices.CreateScope().
-                    ServiceProvider.GetService<ApplicationDbContext>()
-            )
-            {
-                if (context.Database.GetPendingMigrations().Any())
-                    context.Database.Migrate();
-            }
+            // using (var context =
+            //     app.ApplicationServices.CreateScope().
+            //         ServiceProvider.GetService<ApplicationDbContext>()
+            // )
+            // {
+            //     if (context.Database.GetPendingMigrations().Any())
+            //         context.Database.Migrate();
+            // }
 
             app.PopulateDatabase();
 
             app.UseDeveloperExceptionPage();
-
-            // if (env.IsDevelopment())
-            // else
-            // {
-            //     app.UseExceptionHandler("/Error");
-            //     app.UseHsts();
-            // }
 
             app.UseHttpsRedirection();
 
