@@ -31,7 +31,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Watch: server",
+			"label": "Watch: Server",
 			"type": "shell",
 			"command": "dotnet",
 			"args": [
@@ -56,7 +56,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Watch: pdf generation tests",
+			"label": "Watch: Pdf generation tests",
 			"type": "shell",
 			"command": "start",
 			"args": [
@@ -75,7 +75,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Watch: tests",
+			"label": "Watch: Tests",
 			"type": "shell",
 			"command": "start",
 			"args": [
@@ -103,12 +103,14 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Publish: server",
+			"label": "Publish: Server",
 			"type": "shell",
 			"command": "dotnet",
 			"args": [
 				"publish",
 				"src/MatMan.UI",
+				"-c",
+				"Release",
 				"-o",
 				"${workspaceFolder}/Deploy/Publish"
 			],
@@ -120,15 +122,22 @@
 				"showReuseMessage": false,
 				"clear": false
 			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
 			"problemMatcher": []
 		},
 		{
-			"label": "Load files via ftp",
+			"label": "Load published files to FTP server",
 			"type": "shell",
-			"command": "winscp",
+			"command": "ncftpput",
 			"args": [
-				"/nointeractiveinput",
-				"/script=${workspaceFolder}/Deploy/DeploymentScript.txt"
+				"-f",
+				"${workspaceFolder}/Deploy/login.cfg",
+				"-R",
+				"www.matman.somee.com/.",
+				"${workspaceFolder}/Deploy/Publish/*"
 			],
 			"problemMatcher": []
 		},
@@ -136,8 +145,8 @@
 			"label": "Deploy",
 			"type": "shell",
 			"dependsOn": [
-				"Publish: server",
-				"Load files via ftp"
+				"Publish: Server",
+				"Load published files to FTP server"
 			],
 			"group": {
 				"kind": "build",
