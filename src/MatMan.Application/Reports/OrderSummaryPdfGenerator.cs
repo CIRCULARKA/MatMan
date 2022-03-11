@@ -19,6 +19,7 @@ namespace MatMan.Application.Reports
         {
             _documentBuilder = DocumentBuilder.New();
             _documentSectionBuilder = SectionBuilder.New();
+            _documentSectionBuilder.SetOrientation(PageOrientation.Portrait);
 
             var documentStyle = StyleBuilder.New();
             documentStyle.SetFontName(Fonts.Courier(14).Name);
