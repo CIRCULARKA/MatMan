@@ -31,7 +31,7 @@ namespace MatMan.Application.Reports
         }
 
         /// <summary>
-        /// Creates pdf document at specified path. Stores pdf file in user local data by default
+        /// Outputs generated PDF document as the sequence of bytes
         /// </summary>
         public byte[] GenerateReport(string title, IEnumerable<OrderComponent<Material>> wareMaterials)
         {
